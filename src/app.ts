@@ -6,6 +6,7 @@ import authRoutes from './routs/auth'
 import applicationRoutes from './routs/application'
 import company from './routs/company'
 import dictionaryRoutes from './routs/dictionary'
+import productRoutes from './routs/product'
 
 import middlewarePassportJs from './middleware/passport'
 
@@ -16,8 +17,11 @@ const app = express()
   app.use(passport.initialize())
   middlewarePassportJs(passport)
   app.use(require('cors')())
-  app.use(bodyParser.json());
+  app.use(bodyParser.json({
+    limit: '50mb'
+  }));
   app.use(bodyParser.urlencoded({
+    limit: '50mb',
     extended: true
   }));
 // ======================
@@ -26,7 +30,8 @@ const app = express()
   app.use('/api/auth', authRoutes) 
   app.use('/api/application', applicationRoutes)
   app.use('/api/company', company)
-  app.use('/api/dictionary', dictionaryRoutes) 
+  app.use('/api/dictionary', dictionaryRoutes)
+  app.use('/api/product', productRoutes) 
 // =====
 
 export default app

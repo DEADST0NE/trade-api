@@ -5,8 +5,7 @@ const postStage = (req: Request, res: Response) => {
 
   const applicationId: string = req.body.applicationId;
   const userId: string = req.body.userId;
-  const stageId: number = req.body.stageId; 
-  console.log(req.body);
+  const stageId: number = req.body.stageId;
   if (applicationId && userId && stageId) {
     prisma.d_clients_application_routes_stage.create({
       data: {

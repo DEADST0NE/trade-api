@@ -1,12 +1,12 @@
 import ClientFtp from 'ftp'
 
-const ftp = new ClientFtp();
-
-ftp.connect({
-  host: '192.168.35.72',
-  port: 25,
-  user: 'ftp',
-  password: '123'
+const clientFtp = new ClientFtp;
+      
+clientFtp.connect({
+  host: process.env.FTP_HOST,
+  port: Number(process.env.FTP_PORT),
+  user: process.env.FTP_USER,
+  password: process.env.FTP_PASSWORD
 });
 
-export default ftp;
+export default clientFtp

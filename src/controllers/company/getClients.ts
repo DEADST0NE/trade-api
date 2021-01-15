@@ -53,6 +53,7 @@ const getClients = (req: Request, res: Response) => {
         }
       }
     }).then(data => {
+      console.log(data);
       const requestData = data?.map(item => (
         { 
           key: item.id,
