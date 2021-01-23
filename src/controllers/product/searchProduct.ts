@@ -17,7 +17,6 @@ interface priceType {
 interface productType {
   id: string;
   avatarProduct: any;
-  code: string,
   name: string | null;
   price: priceType[];
   weight: number | null;
@@ -26,20 +25,17 @@ interface productType {
     value: number;
     label: string;
   }
-} 
+}
 
-const getProducts = (req: Request, res: Response) => {
-  const companyId = req.query.companyId && String(req.query.companyId);
+const searchProduct = (req: Request, res: Response) => {
+  const searchText = String(req.query.searchText);
   let categoryId = req.query.categoryId && String(req.query.categoryId);
-  const skip = req.query.skip ? Number(req.query.skip) : undefined;
-  const take = req.query.take ? Number(req.query.take) : undefined;
-  console.log(req.query.manufactureFilter);
-  const manufactureFilter: any = req.query.manufactureFilter?.length ? req.query.manufactureFilter : undefined; 
+  const companyId = req.query.companyId && String(req.query.companyId); 
+  const manufactureFilter: string[] | undefined = req.query.manufactureFilter ? JSON.parse(String(req.query.manufactureFilter)) : undefined; 
 
-  if (companyId && categoryId) {
-
-
-    const www = manufactureFilter?.length ? manufactureFilter?.map( (item: any) => ({
+  if(searchText && companyId && categoryId) {
+    if(categoryId === 'all')  categoryId=undefined;
+    const www = manufactureFilter?.length ? manufactureFilter?.map( item => ({
       id: item,
       d_companies: {
         id: companyId
@@ -53,19 +49,25 @@ const getProducts = (req: Request, res: Response) => {
       }
     ]
 
-    if(categoryId === 'all')  categoryId=undefined;
-
     prisma.d_companies_products.findMany({
-      skip: skip,
-      take: take, 
-      where: {
-        is_remove: false, 
+      where: { 
         d_companies_manufacturers: { 
           OR: www,
         },
         d_companies_products_types: {
           id: categoryId
-        }
+        },
+        OR: [{
+          description: { 
+            contains: searchText,
+            mode: "insensitive"
+          }
+        }, {
+          product_name: { 
+            contains: searchText,
+            mode: "insensitive"
+          }
+        }]
       },
       select: {
         id: true,
@@ -103,8 +105,8 @@ const getProducts = (req: Request, res: Response) => {
           }
         },
       }
-    }).then((data) => {
-      const requestData: requestDataType<productType> = {}; 
+    }).then(data => {
+      const requestData: requestDataType<productType> = {};
 
       const generateProduct = (product: typeof data[0] ) => ({
         id: product.id,
@@ -135,13 +137,12 @@ const getProducts = (req: Request, res: Response) => {
       for (const product of data) { 
         requestData[product.id] = generateProduct(product)
       };
-
-      return res.status(200).json(requestData);
-    }).catch((err) => {
-        res.status(500).send({ message: err.message || "Error" });
+      res.status(200).send(requestData);
+    }).catch(err => {
+      res.status(500).send({ message: err.message || "Error" });
     });
   }
-  else res.status(400).json({ message: 'Id компании не заполнен' });
-}
+  else res.status(400).json({ message: 'Текст поиска пустое'});
+};
 
-export default getProducts
+export default searchProduct

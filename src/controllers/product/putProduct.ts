@@ -3,11 +3,13 @@ import prisma from '../../../prisma'
 import ClientFtp from 'ftp'
 
 const putProducts = async (req: Request, res: Response) => {
-
+  const manufactureId: string = req.body.manufactureId;
+  const сategoryId: string = req.body.сategoryId;
   const productsId: string = req.body.productsId;
   const productsName: string = req.body.productsName;
   const measureType: number = req.body.measureType;
   const description: string = req.body.description;
+  const code: string = req.body.code;
   const weight: number = req.body.weight && Number(req.body.weight);
   const priceArray:{
     id?:string
@@ -15,10 +17,10 @@ const putProducts = async (req: Request, res: Response) => {
     price: number
   }[] = req.body.priceArray; 
   const imgProduct: string = req.body.imgProduct;
+  console.log(req.body);
+  if(productsId && productsName && measureType && priceArray && сategoryId && manufactureId) {
   
-  if(productsId && productsName && measureType && priceArray) {
-  
-    const fotoPut = async (id: string) => await new Promise((resolve, reject) => { 
+    const fotoPut = async (id: string, imgProduct: string) => await new Promise((resolve, reject) => { 
       const clientFtp = new ClientFtp;
 
       clientFtp.connect({
@@ -29,7 +31,7 @@ const putProducts = async (req: Request, res: Response) => {
       }); 
 
       clientFtp.on('ready', () => {
-        clientFtp.put(Buffer.from(imgProduct, 'base64'), `./company/products/img/${id}.png`, (err) => {
+        clientFtp.append(Buffer.from(imgProduct, 'base64'), `./company/products/img/${id}.png`, (err) => {
           if (err) throw err;
           clientFtp.end();
           resolve(true);
@@ -37,7 +39,7 @@ const putProducts = async (req: Request, res: Response) => {
       });
     });
 
-    await fotoPut(productsId);
+    if(imgProduct) await fotoPut(productsId, imgProduct);
 
     prisma.d_companies_products_price.findMany({
       where: {
@@ -63,18 +65,29 @@ const putProducts = async (req: Request, res: Response) => {
     });
 
     prisma.d_companies_products.update({
-      where: {
+      where: { 
         id: productsId,
       },
       data: {
         weight: weight,
         description: description,
         product_name: productsName,
+        code: code,
+        d_companies_manufacturers: {
+          connect: {
+            id: manufactureId,
+          }
+        }, 
         s_unit_measure: {
           connect: {
             id: measureType,
           }
-        }, 
+        },
+        d_companies_products_types: {
+          connect: {
+            id: сategoryId,
+          }
+        },
         d_companies_products_price: {
           upsert: priceArray.map( item => ({
             create: {
@@ -104,15 +117,27 @@ const putProducts = async (req: Request, res: Response) => {
         weight: true,
         description: true,
         product_name: true,
+        code: true,
+        d_companies_manufacturers: {
+          select: {
+            id: true,
+            manufacturer_name: true,
+          }
+        },
         s_unit_measure: {
           select: {
             id: true,
             unit_name: true,
           }
         }, 
+        d_companies_products_types: {
+          select: {
+            id: true
+          }
+        },
         d_companies_products_price: {
           select: {
-            id: true,
+            id: true, 
             d_companies_clients_category: {
               select: {
                 id: true,
@@ -121,37 +146,13 @@ const putProducts = async (req: Request, res: Response) => {
             },
             price: true,
           }
-        }, 
+        },
       }
-    }).then( async (data) => { 
-
-      const fotoGet = async (id: string) => await new Promise((resolve, reject) => { 
-        const clientFtp = new ClientFtp;
-  
-        clientFtp.connect({
-          host: process.env.FTP_HOST,
-          port: Number(process.env.FTP_PORT),
-          user: process.env.FTP_USER,
-          password: process.env.FTP_PASSWORD
-        }); 
-  
-        clientFtp.on('ready', () => {
-          clientFtp.get(`./company/products/img/${id}.png`,(err, stream) => { 
-            if (err) {
-              clientFtp.end();
-              return resolve('')
-            };
-            let data = Buffer.alloc(0);
-            stream.on('data', chunk => data = Buffer.concat([data, chunk]));
-            stream.on('error', (err) => { console.log(err); reject });
-            stream.once('close', () => { clientFtp.end(); resolve(`data:image/png;base64, ${data.toString('base64')}`) }); 
-          });
-        });
-      });
+    }).then( async (data) => {  
 
       const requestData = {
         id: data.id,
-        avatarProduct: await fotoGet(data.id),
+        avatarProduct:  `http://${res.req?.headers.host}/api/img/product/?id_img=${data.id}`,
         weight: data.weight,
         description: data.description,
         price: data.d_companies_products_price.map(price => ({
@@ -166,9 +167,14 @@ const putProducts = async (req: Request, res: Response) => {
         measure: {
           value: data.s_unit_measure.id,
           label: data.s_unit_measure.unit_name
+        },
+        code: data.code,
+        manufacturer: {
+          id: data.d_companies_manufacturers.id,
+          name: data.d_companies_manufacturers.manufacturer_name
         }
       };
-      res.status(200).send(requestData);
+      res.status(200).json(requestData);
 
     }).catch(err => {
       console.log(err);

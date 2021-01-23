@@ -53,9 +53,34 @@ const getClients = (req: Request, res: Response) => {
         }
       }
     }).then(data => {
-      console.log(data);
-      const requestData = data?.map(item => (
-        { 
+
+      interface requestDataType<TValue> {
+        [id: string]: TValue;
+      }
+
+      interface clientsType {
+        key: string,
+        id: string,
+        name: string,
+        address: string,
+        email: string,
+        phone: string,
+        dateAdd: string,
+        clientsCategory: {
+          value: string | undefined,
+          label: string | undefined,
+        },
+        applicationStatistic: {
+          count: number,
+          stages: number[]
+        },
+        debt?: any
+      }
+
+      const requestData: requestDataType<clientsType> = {} 
+
+      data.forEach((item) => {
+        requestData[item.id] = {
           key: item.id,
           id: item.d_clients.id,
           name: item.d_clients.client_name,
@@ -74,8 +99,9 @@ const getClients = (req: Request, res: Response) => {
             }, {})
           },
           debt: paidStatus(item.d_clients.d_clients_application)
-        }
-      ))
+        };
+      }); 
+
       res.status(200).send(requestData);
     }).catch(err => {
       console.log(err);

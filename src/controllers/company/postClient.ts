@@ -7,7 +7,6 @@ import paidStatus from '../../utils/paidStatus'
 const postClient = (req: Request, res: Response) => { 
   const companyId = req.body.companyId; 
   const clientId = req.body.clientId;
-  console.log(clientId, companyId);
   if(companyId && clientId) {
     prisma.d_companies_clients.create({
       data: {
