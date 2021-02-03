@@ -5,10 +5,42 @@ import moment from 'moment'
 import paidStatus from '../../utils/paidStatus'
 
 const getClients = (req: Request, res: Response) => {
-  const companieId = String(req.query.companieId);
+  const companieId = String(req.query.companieId); 
+  const searchText = req.query.searchText && String(req.query.searchText);
   if(companieId) {
     prisma.d_companies_clients.findMany({
-      where: {
+      where: searchText ? {
+        d_companies_id: companieId,
+        OR: [{
+          d_clients: {
+            client_name: { 
+              contains: searchText,
+              mode: "insensitive"
+            }
+          }
+        },{
+          d_clients: {
+            address: { 
+              contains: searchText,
+              mode: "insensitive"
+            }
+          }
+        },{
+          d_clients: {
+            email: { 
+              contains: searchText,
+              mode: "insensitive"
+            }
+          }
+        },{
+          d_clients: {
+            phone_number1: { 
+              contains: searchText,
+              mode: "insensitive"
+            }
+          }
+        }]
+      } : {
         d_companies_id: companieId
       },
       select: {
@@ -80,7 +112,7 @@ const getClients = (req: Request, res: Response) => {
       const requestData: requestDataType<clientsType> = {} 
 
       data.forEach((item) => {
-        requestData[item.id] = {
+        requestData[item.d_clients.id] = {
           key: item.id,
           id: item.d_clients.id,
           name: item.d_clients.client_name,

@@ -32,14 +32,28 @@ const getProducts = (req: Request, res: Response) => {
   const companyId = req.query.companyId && String(req.query.companyId);
   let categoryId = req.query.categoryId && String(req.query.categoryId);
   const skip = req.query.skip ? Number(req.query.skip) : undefined;
-  const take = req.query.take ? Number(req.query.take) : undefined;
-  console.log(req.query.manufactureFilter);
+  const take = req.query.take ? Number(req.query.take) : undefined; 
   const manufactureFilter: any = req.query.manufactureFilter?.length ? req.query.manufactureFilter : undefined; 
+  const clientCatygoryFilter: any = req.query.clientCatygoryFilter?.length ? req.query.clientCatygoryFilter : undefined; 
 
   if (companyId && categoryId) {
 
 
-    const www = manufactureFilter?.length ? manufactureFilter?.map( (item: any) => ({
+    const filterM = manufactureFilter?.length ? manufactureFilter?.map( (item: any) => ({
+      id: item,
+      d_companies: {
+        id: companyId
+      }
+    })) : [
+      {
+        id: undefined,
+        d_companies: {
+          id: companyId
+        }
+      }
+    ]
+
+    const filterCc = clientCatygoryFilter?.length ? clientCatygoryFilter?.map( (item: any) => ({
       id: item,
       d_companies: {
         id: companyId
@@ -61,11 +75,18 @@ const getProducts = (req: Request, res: Response) => {
       where: {
         is_remove: false, 
         d_companies_manufacturers: { 
-          OR: www,
+          OR: filterM,
+        },
+        d_companies_products_price: {
+          some: {
+            d_companies_clients_category: {
+              OR: filterCc
+            }
+          }
         },
         d_companies_products_types: {
-          id: categoryId
-        }
+          id: categoryId,
+        }, 
       },
       select: {
         id: true,

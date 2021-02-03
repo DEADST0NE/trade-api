@@ -92,8 +92,7 @@ const getApplications = (req: Request, res: Response) => {
         };
       }); 
       return res.status(200).json(requestData);
-    }).catch((err) => {
-        console.log(JSON.stringify(err, null, 4))
+    }).catch((err) => { 
         res.status(500).send({ message: err.message || "Error" });
     });
   }

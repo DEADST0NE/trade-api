@@ -12,10 +12,16 @@ const statistics = (req: Request, res: Response) => {
         d_companies_clients_category: false,
         d_clients_application: false,
         d_clients_application_pay_detail: false,
+        d_companies_products: {
+          select: {
+            id: true
+          }
+        }
       }
     }).then((data) => {
         const requestData = data?.map(item => ({
           id: item.id,
+          avatarProduct: `http://${res.req?.headers.host}/api/img/product/?id_img=${item.d_companies_products.id}`,
           productName: item.product_name,
           count: item.count_product,
           total: item.total
