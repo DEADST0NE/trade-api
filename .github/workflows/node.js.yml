@@ -26,6 +26,6 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm install --save --legacy-peer-deps
-    - run: npm prismaI
-    - run: npm prismaG
+    - run: npx prisma introspect
+    - run: npx prisma generate
     - run: tsc
