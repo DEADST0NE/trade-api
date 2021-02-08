@@ -27,8 +27,7 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - run: npm install --save --legacy-peer-deps
     - run: npx prisma introspect
-    - run: npx prisma generate
-    - run: Import-Module WebAdministration
-    - run: Stop-WebSite -Name "Trade-api"
+    - run: npx prisma generate 
+    - run: ./stopIIS.ps1
     - run: tsc
-    - run: Start-WebSite -Name "Trade-api"
+    - run: ./startIIS.ps1
