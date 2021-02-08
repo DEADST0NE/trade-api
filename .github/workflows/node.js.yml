@@ -29,6 +29,5 @@ jobs:
     - run: npx prisma introspect
     - run: npx prisma generate  
     - run: Import-Module WebAdministration
-    - run: Stop-WebSite -Name "Trade-api"
     - run: npx tsc
-    - run: Start-WebSite -Name "Trade-api"
+    - run: Copy-Item -Path "D:\project\node\trade-api-deploy\trade\trade-api\trade-api\dist\*" -Destination "D:\project\node\trade-api-deploy\deploy" -Force
