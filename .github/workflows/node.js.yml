@@ -30,6 +30,7 @@ jobs:
     - run: npx prisma generate 
     - run: ls
     - run: ls
-    - run: ./stopIIS.ps1
+    - run: Import-Module WebAdministration
+    - run: Stop-WebSite -Name "Trade-api"
     - run: tsc
-    - run: ./startIIS.ps1
+    - run: Start-WebSite -Name "Trade-api"
