@@ -28,6 +28,7 @@ jobs:
     - run: npm install --save --legacy-peer-deps
     - run: npx prisma introspect
     - run: npx prisma generate 
+    - run: ls
     - run: ./stopIIS.ps1
     - run: tsc
     - run: ./startIIS.ps1
