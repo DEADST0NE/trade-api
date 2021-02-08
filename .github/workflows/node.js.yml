@@ -29,6 +29,7 @@ jobs:
     - run: npx prisma introspect
     - run: npx prisma generate 
     - run: ls
+    - run: ls
     - run: ./stopIIS.ps1
     - run: tsc
     - run: ./startIIS.ps1
