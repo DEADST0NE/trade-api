@@ -38,6 +38,6 @@ const app = express()
   app.use('/api/img', imgRoutes)
   app.use('/api/categories', categories) 
   app.use('/api/manufacture', manufacture)
-// =====
+// ===== 
 
 export default app
