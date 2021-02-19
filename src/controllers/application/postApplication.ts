@@ -153,15 +153,13 @@ const postApplications = (req: Request, res: Response) => {
             }
           }).then(() => {
             return res.status(200).json(requestData);
-          }).catch(err => {
-            console.log(err);
+          }).catch(err => { 
             return res.status(500).send({ message: err.message || "Error" });
           }); 
         }); 
       }
       return res.status(200).json(requestData);
     }).catch((err) => {
-        console.log(err);
         res.status(500).send({ message: err.message || "Error" });
     });
   }

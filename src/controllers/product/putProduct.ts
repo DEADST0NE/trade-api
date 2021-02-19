@@ -16,8 +16,7 @@ const putProducts = async (req: Request, res: Response) => {
     categoryClient: string,
     price: number
   }[] = req.body.priceArray; 
-  const imgProduct: string = req.body.imgProduct;
-  console.log(req.body);
+  const imgProduct: string = req.body.imgProduct; 
   if(productsId && productsName && measureType && priceArray && сategoryId && manufactureId) {
   
     const fotoPut = async (id: string, imgProduct: string) => await new Promise((resolve, reject) => { 
@@ -176,8 +175,7 @@ const putProducts = async (req: Request, res: Response) => {
       };
       res.status(200).json(requestData);
 
-    }).catch(err => {
-      console.log(err);
+    }).catch(err => { 
       res.status(500).send({ message: err.message || "Error" });
     });
   }

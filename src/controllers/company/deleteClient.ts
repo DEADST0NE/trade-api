@@ -82,8 +82,7 @@ const deleteClient = (req: Request, res: Response) => {
           }
         ))
         res.status(200).send(requestData);
-      }).catch(err => {
-        console.log(err);
+      }).catch(err => { 
         res.status(500).send({ message: err.message || "Error" });
       });
     }).catch(err => { 

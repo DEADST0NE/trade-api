@@ -3,8 +3,7 @@ import prisma from '../../../prisma'
 
 const putCategory = (req: Request, res: Response) => { 
   const categoryId = req.body.categoryId && String(req.body.categoryId);
-  const categoryName = req.body.categoryName && String(req.body.categoryName);
-  console.log(categoryId, categoryName);
+  const categoryName = req.body.categoryName && String(req.body.categoryName); 
   if(categoryId && categoryName) {
     prisma.d_companies_products_types.update({
       where: {

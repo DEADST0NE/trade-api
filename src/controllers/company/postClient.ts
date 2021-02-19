@@ -84,8 +84,7 @@ const postClient = (req: Request, res: Response) => {
         debt: paidStatus(data.d_clients.d_clients_application)
       }
       res.status(200).send(requestData);
-    }).catch(err => {
-      console.log(err);
+    }).catch(err => { 
       res.status(500).send({ message: err.message || "Error" });
     });
   }

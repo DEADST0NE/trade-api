@@ -26,8 +26,7 @@ const fotoDelete = async (id: string) => await new Promise((resolve, reject) => 
 
 
 const deleteProducts = async (req: Request, res: Response) => {
-  const productId: string | undefined = req.query.productId && String(req.query.productId);
-  console.log(productId, req.params);
+  const productId: string | undefined = req.query.productId && String(req.query.productId); 
   if(productId) {
     prisma.d_companies_products.update({
       where: {
@@ -68,8 +67,7 @@ const deleteProducts = async (req: Request, res: Response) => {
     }).then( async (data) => {
       await fotoDelete(productId);
       res.status(200).json(data.id); 
-    }).catch(err => {
-      console.log(err);
+    }).catch(err => { 
       res.status(500).send({ message: err.message || "Error" });
     });
   }

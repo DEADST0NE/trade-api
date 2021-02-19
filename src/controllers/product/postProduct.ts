@@ -137,8 +137,7 @@ const postProducts = async (req: Request, res: Response) => {
       };
       return res.status(200).json(requestData);
 
-    }).catch(err => {
-      console.log(err);
+    }).catch(err => { 
       res.status(500).send({ message: err.message || "Error" });
     });
   }
