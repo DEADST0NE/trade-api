@@ -22,20 +22,50 @@ const getClientCategoryCompany = (req: Request, res: Response) => {
         d_companies_products_types: {
           select: {
             id: true,
-            type_name: true
+            type_name: true,
+            d_companies_products: true
           }
         }
       }
     }).then((data) => { 
-      const requestData = data.map( item => ({
-        id: item.id,
-        name: item.companies_name,
-        address: item.address,
-        categories: item.d_companies_products_types.map((category) => ({
-          id: category.id,
-          name: category.type_name
-        }))
-      }))
+
+      interface requestDataType<TValue> {
+        [id: string]: TValue;
+      }
+
+      interface catygoryType {
+        id: string;
+        name: string; 
+        address: string;
+        categories: {
+          id: string | undefined,
+          name: string,
+          count: number
+        }[]; 
+      }
+
+      const requestData: requestDataType<catygoryType> = {}
+
+      data.forEach( item => {
+        requestData[item.id] = {
+          id: item.id,
+          name: item.companies_name,
+          address: item.address,
+          categories: [
+            {
+              id: undefined,
+              name: 'Все товары',
+              count: item.d_companies_products_types.reduce((sum, e) => sum = sum + e.d_companies_products.length, 0) 
+            },
+            ...item.d_companies_products_types.map((category) => ({
+              id: category.id,
+              name: category.type_name,
+              count: category.d_companies_products.length
+            }))
+          ]
+        }
+      });
+
       return res.status(200).json(requestData);
     }).catch((err) => {
         res.status(500).send({ message: err.message || "Error" });

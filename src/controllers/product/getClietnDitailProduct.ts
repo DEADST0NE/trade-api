@@ -68,15 +68,15 @@ const getClietnDitailProduct = (req: Request, res: Response) => {
         price: {
           id: product.d_companies_products_price[0].id,
           count: product.d_companies_products_price[0].price
-        },
+        }, 
         name: product.product_name, 
         measure: product.s_unit_measure.unit_name,
         manufacturer: {
           id: product.d_companies_manufacturers.id,
           name: product.d_companies_manufacturers.manufacturer_name,
         },
+        companyId: product.d_companies_manufacturers.d_companies.id,
         company: {
-          id: product.d_companies_manufacturers.d_companies.id,
           name: product.d_companies_manufacturers.d_companies.companies_name,
           phone: product.d_companies_manufacturers.d_companies.phone_number1,
           address: product.d_companies_manufacturers.d_companies.address,

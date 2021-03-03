@@ -26,15 +26,28 @@ interface productType {
 const getProducts = (req: Request, res: Response) => {
   const clientId = req.query.clientId && String(req.query.clientId);
   const skip = req.query.skip ? Number(req.query.skip) : undefined;
-  const take = req.query.take ? Number(req.query.take) : undefined; 
+  const take = req.query.take ? Number(req.query.take) : undefined;  
+  let categoryProductId = req.query.categoryProductId && String(req.query.categoryProductId);
+  let companyId = req.query.companyId && String(req.query.companyId);
+
+  if(categoryProductId === 'undefined') categoryProductId = undefined;
+  if(companyId === 'undefined') companyId = undefined;
 
   if (clientId) {
     prisma.d_companies_products.findMany({
       skip: skip,
-      take: 20, 
+      take: 55, 
       where: { 
         is_remove: false,
-        d_companies_products_price: { 
+        d_companies_products_types: {
+          id: categoryProductId
+        },
+        d_companies_manufacturers: {
+          d_companies: {
+            id: companyId
+          }
+        },
+        d_companies_products_price: {
           some: { 
             OR: [
               {
@@ -47,7 +60,7 @@ const getProducts = (req: Request, res: Response) => {
                   equals: null
                 },
               }
-            ],
+            ], 
             d_companies_clients_category: { 
               d_companies_clients: {
                 some: {
@@ -57,7 +70,7 @@ const getProducts = (req: Request, res: Response) => {
                 }
               }
             }
-          }
+          }, 
         }
       },
       select: {
@@ -70,6 +83,11 @@ const getProducts = (req: Request, res: Response) => {
           select: {
             id: true,
             manufacturer_name: true,
+            d_companies: {
+              select: {
+                id: true
+              }
+            }
           }
         },
         s_unit_measure: {
@@ -94,19 +112,22 @@ const getProducts = (req: Request, res: Response) => {
           }
         },
       }
-    }).then((data) => {
+    }).then((data) => { 
+      if(!data.length) return res.status(200).json({});
+
       const requestData: requestDataType<productType> = {};
 
       const generateProduct = (product: typeof data[0] ) => ({
         id: product.id,
         avatarProduct: `http://${res.req?.headers.host}/api/img/product/?id_img=${product.id}`,
         weight: product.weight,
+        companyId: product.d_companies_manufacturers.d_companies.id,
         description: product.description, 
         code: product.code,
         price: {
           id: product.d_companies_products_price[0].d_companies_clients_category.id,
           count: product.d_companies_products_price[0].price
-        },
+        }, 
         name: product.product_name, 
         measure: product.s_unit_measure.unit_name,
         manufacturer: {
@@ -117,8 +138,8 @@ const getProducts = (req: Request, res: Response) => {
 
       for (const product of data) {
         requestData[product.id] = generateProduct(product)
-      };
-      
+      }; 
+
       return res.status(200).json(requestData);
     }).catch((err) => {
         res.status(500).send({ message: err.message || "Error" });

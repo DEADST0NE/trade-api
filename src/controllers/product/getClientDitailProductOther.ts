@@ -17,16 +17,17 @@ interface productType {
 } 
 
 const getClientDitailProductOther = (req: Request, res: Response) => {
-  const categoryClientId = req.query.categoryClientId && String(req.query.categoryClientId); 
+  const categoryClientId = req.query.categoryClientId && String(req.query.categoryClientId);
+
   if (categoryClientId) {
     prisma.d_companies_products.findMany({ 
-      take: 10,
+      take: 20,
       where: {
         d_companies_products_price: {
           some: {
             d_companies_clients_category: {
               id: categoryClientId
-            }
+            } 
           } 
         }
       },
@@ -39,6 +40,17 @@ const getClientDitailProductOther = (req: Request, res: Response) => {
             unit_name: true,
           }
         }, 
+        d_companies_manufacturers: {
+          select: {
+            id: true,
+            manufacturer_name: true,
+            d_companies: {
+              select: {
+                id: true
+              }
+            }
+          }
+        },
         d_companies_products_types: {
           select: {
             id: true,
@@ -63,12 +75,17 @@ const getClientDitailProductOther = (req: Request, res: Response) => {
         id: product.id,
         avatarProduct: `http://${res.req?.headers.host}/api/img/product/?id_img=${product.id}`,
         weight: product.weight, 
+        companyId: product.d_companies_manufacturers.d_companies.id,
         price: {
           id: product.d_companies_products_price[0].d_companies_clients_category.id, 
           count: product.d_companies_products_price[0].price
         },
         name: product.product_name, 
         measure: product.s_unit_measure.unit_name, 
+        manufacturer: {
+          id: product.d_companies_manufacturers.id,
+          name: product.d_companies_manufacturers.manufacturer_name,
+        }
       }) 
 
       for (const product of data) {
