@@ -83,8 +83,7 @@ const getApplicationDitail = (req: Request, res: Response) => {
           clientEmail: data.d_clients.email,
           clientTel1: data.d_clients.phone_number1,
           companyName: data.d_clients_application_products[0].d_companies_products.d_companies_manufacturers.d_companies.companies_name,
-          pay: data.d_clients_application_products.reduce((a, b) => a+(b.total || 0), 0),
-          paid: Number(paidStatus(data.d_clients_application_products, data.d_clients_application_pay).toFixed(2)),
+          pay: data.d_clients_application_products.reduce((a, b) => a+Number(b.total || 0), 0),
           stages: data.d_clients_application_routes_stage.map((stage) => ( stage.s_routes_stage_id )),
           pays: data.d_clients_application_pay.map((pay) => ({
             id: pay.id,

@@ -1,3 +1,4 @@
+import { Decimal } from '@prisma/client/runtime';
 import { Request, Response } from 'express'
 import prisma from '../../../prisma'
 
@@ -10,9 +11,9 @@ interface productType {
   avatarProduct: any;
   name: string | null;
   price: { 
-    count: number
+    count: Decimal
   };
-  weight: number | null;
+  weight: any;
   measure: string; 
 } 
 

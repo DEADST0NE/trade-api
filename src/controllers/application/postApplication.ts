@@ -127,8 +127,7 @@ const postApplications = (req: Request, res: Response) => {
         clientAddress: data.d_clients.address,
         clientEmail: data.d_clients.email,
         clientTel1: data.d_clients.phone_number1,
-        pay: data.d_clients_application_products.reduce((a, b) => a+(b.total || 0), 0),
-        paid: Number(paidStatus(data.d_clients_application_products, data.d_clients_application_pay).toFixed(2)),
+        pay: data.d_clients_application_products.reduce((a, b) => a+Number(b.total || 0), 0),
         stages: data.d_clients_application_routes_stage.map((stage) => ( stage.s_routes_stage_id ))
       }
       if(payments) {

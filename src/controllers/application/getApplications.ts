@@ -11,27 +11,27 @@ const paidStatus = (pay: {total: number | null}[]  , paid: {sum_pay: number}[]) 
 
 const getApplications = (req: Request, res: Response) => {
   const companyId = req.query.company_id && String(req.query.company_id);
-  const clientId = req.query.client_id && String(req.query.client_id); 
-  console.log(companyId);
+  const clientId = req.query.client_id && String(req.query.client_id);
   if (companyId || clientId) {
     prisma.d_clients_application.findMany({
       where: { 
-        d_clients: {
-            OR: [{
-              s_accounts: {
-                d_user: {
-                  some: {
-                    d_companies: {
-                      id: companyId
-                    }
-                  } 
+        OR: [{
+          d_clients: {
+            id: clientId 
+          }
+        }, {
+          d_clients_application_products: {
+            some: {
+              d_companies_products: {
+                d_companies_manufacturers: {
+                  d_companies: {
+                    id: companyId
+                  }
                 }
-                }
-            },
-            { 
-              id: clientId 
-            }]
-        }, 
+              }
+            }
+          }
+        }]
       },
       include: {
         d_clients: {
@@ -92,7 +92,6 @@ const getApplications = (req: Request, res: Response) => {
         companyName: string;
         productLength: number;
       }
-
       const requestData: requestDataType<applicationType> = {}
       data.forEach((item) => {
         requestData[item.id] = {
@@ -108,8 +107,8 @@ const getApplications = (req: Request, res: Response) => {
           clientEmail: item.d_clients.email,
           clientTel1: item.d_clients.phone_number1,
           companyName: item.d_clients_application_products[0].d_companies_products.d_companies_manufacturers.d_companies.companies_name,
-          pay: item.d_clients_application_products.reduce((a, b) => a+(b.total || 0), 0),
-          paid: Number(paidStatus(item.d_clients_application_products, item.d_clients_application_pay).toFixed(2)),
+          pay: item.d_clients_application_products.reduce((a, b) => a + Number(b.total || 0), 0),
+          paid: 44,
           stages: item.d_clients_application_routes_stage.map((stage) => ( stage.s_routes_stage_id ))
         };
       }); 
