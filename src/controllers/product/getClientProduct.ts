@@ -27,26 +27,41 @@ interface productType {
 const getProducts = (req: Request, res: Response) => {
   const clientId = req.query.clientId && String(req.query.clientId);
   const skip = req.query.skip ? Number(req.query.skip) : undefined;
-  const take = req.query.take ? Number(req.query.take) : undefined;  
-  let categoryProductId = req.query.categoryProductId && String(req.query.categoryProductId);
-  let companyId = req.query.companyId && String(req.query.companyId);
+  const take = req.query.take ? Number(req.query.take) : undefined;
+  const searchText = req.query.searchText as string | undefined; 
+  let categoryProductId = req.query.categoryProductId as string | undefined;
+  let companyId = req.query.companyId as string | undefined;
+  const manufactureFilter = req.query.manufactureFilter?.length ? req.query.manufactureFilter as  string[] | undefined : undefined ; 
 
   if(categoryProductId === 'undefined') categoryProductId = undefined;
   if(companyId === 'undefined') companyId = undefined;
 
+  const filterM = manufactureFilter?.length ? manufactureFilter?.map((item) => ({
+    id: item,
+  })) : [
+    { 
+      id: undefined
+    }
+  ]
+
   if (clientId) {
     prisma.d_companies_products.findMany({
       skip: skip,
-      take: 55, 
+      take: take, 
       where: { 
         is_remove: false,
+        product_name: {
+          contains: searchText,
+          mode: "insensitive"
+        },
         d_companies_products_types: {
           id: categoryProductId
         },
-        d_companies_manufacturers: {
+        d_companies_manufacturers: { 
+          AND: filterM,
           d_companies: {
             id: companyId
-          }
+          },
         },
         d_companies_products_price: {
           some: { 

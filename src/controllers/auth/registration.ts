@@ -33,11 +33,13 @@ const registration = async (req: Request, res: Response) => {
         }
       },
       select: {
+        id: true,
         d_clients: true,
       }
     }).then((data) => {
       const requsetData = {
         id: data.d_clients[0].id,
+        accountId: data.id,
         email: data.d_clients[0].email,
         name: data.d_clients[0].client_name,
         phone: data.d_clients[0].phone_number1,
