@@ -26,7 +26,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm install
-    - run: npx prisma introspect --force
+    - run: npx prisma introspect --force  
     - run: npx prisma generate  
     - run: Import-Module WebAdministration
     - run: npx tsc
