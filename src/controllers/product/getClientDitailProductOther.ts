@@ -8,12 +8,13 @@ interface requestDataType<TValue> {
 
 interface productType {
   id: string;
-  avatarProduct: any;
+  avatarProduct: string;
   name: string | null;
-  price: { 
-    count: Decimal
+  price: {
+    id: string;
+    count: Decimal;
   };
-  weight: any;
+  weight: Decimal | null;
   measure: string; 
 } 
 

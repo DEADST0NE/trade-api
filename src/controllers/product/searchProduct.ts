@@ -17,7 +17,8 @@ interface priceType {
 
 interface productType {
   id: string;
-  avatarProduct: any;
+  avatarProduct: string;
+  categoryId: string;
   name: string | null;
   price: priceType[];
   weight: Decimal | null;
@@ -25,6 +26,10 @@ interface productType {
   measure: {
     value: number;
     label: string;
+  }
+  manufacturer: {
+    id: string;
+    name: string;
   }
 }
 

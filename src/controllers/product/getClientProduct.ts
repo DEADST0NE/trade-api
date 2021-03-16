@@ -8,8 +8,9 @@ interface requestDataType<TValue> {
 
 interface productType {
   id: string;
-  avatarProduct: any;
+  avatarProduct: string;
   code: string,
+  companyId: string,
   name: string | null;
   price: {
     id: string,

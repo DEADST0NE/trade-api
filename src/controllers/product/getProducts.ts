@@ -17,15 +17,21 @@ interface priceType {
 
 interface productType {
   id: string;
-  avatarProduct: any;
+  avatarProduct: string;
   code: string,
   name: string | null;
   price: priceType[];
   weight: Decimal | null;
   description: string | null;
+  categoryId: string;
+  productStatus: number;
   measure: {
     value: number;
     label: string;
+  }
+  manufacturer: {
+    id: string;
+    name: string;
   }
 } 
 
