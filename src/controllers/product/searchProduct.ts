@@ -15,23 +15,23 @@ interface priceType {
   }
 }
 
-interface productType {
-  id: string;
-  avatarProduct: string;
-  categoryId: string;
-  name: string | null;
-  price: priceType[];
-  weight: Decimal | null;
-  description: string | null;
-  measure: {
-    value: number;
-    label: string;
-  }
-  manufacturer: {
-    id: string;
-    name: string;
-  }
-}
+// interface productType {
+//   id: string;
+//   avatarProduct: string;
+//   categoryId: string;
+//   name: string | null;
+//   price: priceType[];
+//   weight: Decimal | null;
+//   description: string | null;
+//   measure: {
+//     value: number;
+//     label: string;
+//   }
+//   manufacturer: {
+//     id: string;
+//     name: string;
+//   }
+// }
 
 const searchProduct = (req: Request, res: Response) => {
   const searchText = String(req.query.searchText);
@@ -112,7 +112,7 @@ const searchProduct = (req: Request, res: Response) => {
         },
       }
     }).then(data => {
-      const requestData: requestDataType<productType> = {};
+      const requestData: requestDataType<any> = {};
 
       const generateProduct = (product: typeof data[0] ) => ({
         id: product.id,

@@ -6,17 +6,17 @@ interface requestDataType<TValue> {
   [id: string]: TValue;
 } 
 
-interface productType {
-  id: string;
-  avatarProduct: string;
-  name: string | null;
-  price: {
-    id: string;
-    count: Decimal;
-  };
-  weight: Decimal | null;
-  measure: string; 
-} 
+// interface productType {
+//   id: string;
+//   avatarProduct: string;
+//   name: string | null;
+//   price: {
+//     id: string;
+//     count: Decimal;
+//   };
+//   weight: Decimal | null;
+//   measure: string; 
+// } 
 
 const getClientDitailProductOther = (req: Request, res: Response) => {
   const categoryClientId = req.query.categoryClientId && String(req.query.categoryClientId);
@@ -71,7 +71,7 @@ const getClientDitailProductOther = (req: Request, res: Response) => {
         },
       }
     }).then((data) => {
-      const requestData: requestDataType<productType> = {};
+      const requestData: requestDataType<any> = {};
 
       const generateProduct = (product: typeof data[0] ) => ({
         id: product.id,
