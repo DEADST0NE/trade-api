@@ -37,17 +37,7 @@ const login = (req: Request, res: Response) => {
             email: true,
             password: true,
             phone_number1: true,
-            address: true,
-            d_clients_application: {
-              select: {
-                d_clients_application_pay: true,
-                d_clients_application_products: {
-                  select: { 
-                    total: true,
-                  }
-                }
-              }
-            }
+            address: true
           }
         },
         s_role: true,
@@ -70,9 +60,7 @@ const login = (req: Request, res: Response) => {
             email: client.email,
             name: client.client_name,
             phone1: client.phone_number1,
-            address: client.address,
-            debt: paidStatus(client.d_clients_application),
-            applicationLength: client.d_clients_application.length,
+            address: client.address
           }
           return res.status(200).json({ ...getToken({
             ...userData,

@@ -28,29 +28,15 @@ const postManufacturers = (req: Request, res: Response) => {
         email: true,
         phone_number1: true
       }
-    }).then((data) => {
-
-      interface requestDataType<TValue> {
-        [id: string]: TValue;
-      } 
-
-      interface manufactureType {
-        id: string,
-        name: string, 
-        address: string,
-        email: string,
-        phone: string,
-      }
-
-      const requestData: requestDataType<manufactureType> = {} 
-
-      requestData[data.id] = {
+    }).then((data) => { 
+      
+      const requestData = {
         id: data.id,
         name: data.manufacturer_name, 
         address: data.address,
         email: data.email,
         phone: data.phone_number1, 
-      }; 
+      };
       
       return res.status(200).json(requestData);
     }).catch((err) => {

@@ -27,6 +27,7 @@ const postProducts = async (req: Request, res: Response) => {
   const manufacturerId: string = req.body.manufacturerId;
   const categoryId: string = req.body.сategoryId; 
   const productsName: string = req.body.productsName;
+  const productStatus: number = req.body.productStatus;
   const measureType: number = req.body.measureType;
   const description: string = req.body.description;
   const code: string = req.body.code;
@@ -37,12 +38,13 @@ const postProducts = async (req: Request, res: Response) => {
     price: number
   }[] = req.body.priceArray; 
   const imgProduct: string = req.body.imgProduct; 
-  if(productsName && measureType && priceArray && categoryId && manufacturerId && code) {
+  if(productsName && measureType && priceArray && categoryId && manufacturerId && code && productStatus) {
     prisma.d_companies_products.create({ 
       data: {
         weight: weight,
         description: description,
         product_name: productsName,
+        product_status: productStatus,
         d_companies_products_types: {
           connect: {
             id: categoryId,
@@ -77,6 +79,7 @@ const postProducts = async (req: Request, res: Response) => {
         description: true,
         product_name: true,
         code: true,
+        product_status: true,
         s_unit_measure: {
           select: {
             id: true,
@@ -116,6 +119,7 @@ const postProducts = async (req: Request, res: Response) => {
         avatarProduct: `http://${res.req?.headers.host}/api/img/product/?id_img=${data.id}`,
         weight: data.weight,
         description: data.description,
+        productStatus: data.product_status,
         price: data.d_companies_products_price.map(price => ({
           id: price.id,
           category: {

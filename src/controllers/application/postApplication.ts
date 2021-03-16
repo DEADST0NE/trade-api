@@ -77,7 +77,7 @@ const postApplications = (req: Request, res: Response) => {
             user_name: ''
           }
         },
-        d_clients_application_pay: {
+        d_clients_application_pay: payments ? { 
           create: {
             pay_date: new Date(),
             sum_pay: payments,
@@ -87,7 +87,7 @@ const postApplications = (req: Request, res: Response) => {
               }
             }
           }
-        }
+        } : {}
       },
       select: {
         id: true,

@@ -30,16 +30,16 @@ interface productType {
 } 
 
 const getProducts = (req: Request, res: Response) => {
+  const searchText = req.query.searchText ? String(req.query.searchText) : undefined;
   const companyId = req.query.companyId && String(req.query.companyId);
   let categoryId = req.query.categoryId && String(req.query.categoryId);
   const skip = req.query.skip ? Number(req.query.skip) : undefined;
   const take = req.query.take ? Number(req.query.take) : undefined; 
   const manufactureFilter: any = req.query.manufactureFilter?.length ? req.query.manufactureFilter : undefined; 
   const clientCatygoryFilter: any = req.query.clientCatygoryFilter?.length ? req.query.clientCatygoryFilter : undefined; 
+  const statusProductFilter: any = req.query.statusProductFilter?.length ? req.query.statusProductFilter : undefined;
 
-  if (companyId && categoryId) {
-
-
+  if (companyId && categoryId) { 
     const filterM = manufactureFilter?.length ? manufactureFilter?.map( (item: any) => ({
       id: item,
       d_companies: {
@@ -70,10 +70,42 @@ const getProducts = (req: Request, res: Response) => {
 
     if(categoryId === 'all')  categoryId=undefined;
 
+    const productStatusFilterAndSearchFilter = () => {
+      if(statusProductFilter?.length) {
+        return statusProductFilter.map( (item: number) => ({
+          OR: searchText ? [{
+            description: { 
+              contains: searchText,
+              mode: "insensitive"
+            }
+          },{
+            product_name: { 
+              contains: searchText,
+              mode: "insensitive"
+            }
+          }] : undefined,
+          product_status: Number(item),
+        }))
+      } else if(searchText) {
+        return [{
+          description: { 
+            contains: searchText,
+            mode: "insensitive"
+          }
+        }, {
+          product_name: { 
+            contains: searchText,
+            mode: "insensitive"
+          }
+        }]
+      } 
+      return undefined
+    } 
     prisma.d_companies_products.findMany({
       skip: skip,
       take: take, 
       where: {
+        OR: productStatusFilterAndSearchFilter(),
         is_remove: false, 
         d_companies_manufacturers: { 
           OR: filterM,
@@ -95,6 +127,7 @@ const getProducts = (req: Request, res: Response) => {
         description: true,
         product_name: true,
         code: true,
+        product_status: true,
         d_companies_manufacturers: {
           select: {
             id: true,
@@ -135,6 +168,7 @@ const getProducts = (req: Request, res: Response) => {
         description: product.description,
         categoryId: product.d_companies_products_types.id,
         code: product.code,
+        productStatus: product.product_status,
         price: product.d_companies_products_price.map((price: any) => ({
           id: price.id,
           category: {

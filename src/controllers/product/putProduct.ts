@@ -7,6 +7,7 @@ const putProducts = async (req: Request, res: Response) => {
   const сategoryId: string = req.body.сategoryId;
   const productsId: string = req.body.productsId;
   const productsName: string = req.body.productsName;
+  const productStatus: number = req.body.productStatus;
   const measureType: number = req.body.measureType;
   const description: string = req.body.description;
   const code: string = req.body.code;
@@ -30,7 +31,7 @@ const putProducts = async (req: Request, res: Response) => {
       }); 
 
       clientFtp.on('ready', () => {
-        clientFtp.append(Buffer.from(imgProduct, 'base64'), `./company/products/img/${id}.png`, (err) => {
+        clientFtp.put(Buffer.from(imgProduct, 'base64'), `./company/products/img/${id}.png`, (err) => {
           if (err) throw err;
           clientFtp.end();
           resolve(true);
@@ -71,6 +72,7 @@ const putProducts = async (req: Request, res: Response) => {
         weight: weight,
         description: description,
         product_name: productsName,
+        product_status: productStatus,
         code: code,
         d_companies_manufacturers: {
           connect: {

@@ -77,6 +77,7 @@ const getClietnDitailProduct = (req: Request, res: Response) => {
         },
         companyId: product.d_companies_manufacturers.d_companies.id,
         company: {
+          companyImg: `http://${res.req?.headers.host}/api/img/company/?id_img=${product.d_companies_manufacturers.d_companies.id}`, 
           name: product.d_companies_manufacturers.d_companies.companies_name,
           phone: product.d_companies_manufacturers.d_companies.phone_number1,
           address: product.d_companies_manufacturers.d_companies.address,

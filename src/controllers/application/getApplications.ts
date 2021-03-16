@@ -43,7 +43,6 @@ const getApplications = (req: Request, res: Response) => {
   const filterDebtStatus = req.query.filterDebtStatus as boolean | undefined;
   const filterStage = req.query.filterStage as number | undefined;
   const filterCompany = req.query.filterCompany as string[] | undefined ; 
-  console.log(req.connection.remoteAddress);
   if (companyId || clientId) {
     prisma.d_clients_application.findMany({
       where: { 
@@ -169,7 +168,6 @@ const getApplications = (req: Request, res: Response) => {
       }); 
        res.status(200).json(requestData);
     }).catch((err) => {
-      console.log(err);
         res.status(500).send({ message: err.message || "Error" });
     });
   }

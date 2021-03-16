@@ -35,6 +35,7 @@ const getClientCategoryCompany = (req: Request, res: Response) => {
 
       interface catygoryType {
         id: string;
+        companyImg: string;
         name: string; 
         address: string;
         categories: {
@@ -49,6 +50,7 @@ const getClientCategoryCompany = (req: Request, res: Response) => {
       data.forEach( item => {
         requestData[item.id] = {
           id: item.id,
+          companyImg: `http://${res.req?.headers.host}/api/img/company/?id_img=${item.id}`, 
           name: item.companies_name,
           address: item.address,
           categories: [

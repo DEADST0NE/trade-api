@@ -26,8 +26,8 @@ const putPayment = (req: Request, res: Response) => {
           }
         }
       },
-    }).then(data => { 
-      const sumPayAll = data[0].d_clients_application_pay.reduce((a,b) => (a + b.id !=paymentId ? Number(b.sum_pay) : 0),0);
+    }).then(data => {  
+      const sumPayAll = data[0].d_clients_application_pay.filter( (a) => a.id != paymentId ).reduce((a,b) => (a + b.id !=paymentId ? Number(b.sum_pay) : 0),0);
       const sunProductTotal = data[0]?.d_clients_application_products.reduce((a,b) => (a + (Number(b.total) * b.count_product)),0); 
       if(Number((sunProductTotal - sumPayAll).toFixed(2)) >= sumPay) { 
         prisma.d_clients_application_pay.update({

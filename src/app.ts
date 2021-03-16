@@ -10,6 +10,7 @@ import productRoutes from './routs/product'
 import imgRoutes from './routs/img'
 import categories from './routs/categories'
 import manufacture from './routs/manufacture'
+import client from './routs/client'
 
 import middlewarePassportJs from './middleware/passport'
 
@@ -38,6 +39,7 @@ const app = express()
   app.use('/api/img', imgRoutes)
   app.use('/api/categories', categories) 
   app.use('/api/manufacture', manufacture)
+  app.use('/api/client', client)
 // ===== 
 
 export default app

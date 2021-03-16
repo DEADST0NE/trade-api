@@ -190,6 +190,7 @@ model d_companies_products {
   product_name                   String?                          @db.VarChar(255)
   s_unit_measure_id              Int
   is_remove                      Boolean                          @default(false)
+  product_status                 Int                              @default(0)
   d_companies_manufacturers      d_companies_manufacturers        @relation(fields: [d_companies_manufacturers_id], references: [id])
   d_companies_products_types     d_companies_products_types       @relation(fields: [d_companies_products_types_id], references: [id])
   s_unit_measure                 s_unit_measure                   @relation(fields: [s_unit_measure_id], references: [id])

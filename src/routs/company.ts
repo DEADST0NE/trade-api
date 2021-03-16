@@ -12,6 +12,7 @@ import deleteClientCategory from '../controllers/company/deleteClientCategory'
 import putClientCategory from '../controllers/company/putClientCategory'
 
 import getCompany from '../controllers/company/getCompany'
+import putCompany from '../controllers/company/putCompany'
 
 const router = express.Router()
 
@@ -22,6 +23,7 @@ router.post('/client', passport.authenticate('jwt', {session: false}), postClien
 router.delete('/client', passport.authenticate('jwt', {session: false}), deleteClient) //api/company/client
 
 router.get('/', passport.authenticate('jwt', {session: false}), getCompany) //api/company
+router.put('/', passport.authenticate('jwt', {session: false}), putCompany) //api/company
 
 router.post('/client/category', passport.authenticate('jwt', {session: false}), postClientCategory) //api/company/client/category
 router.get('/client/category', passport.authenticate('jwt', {session: false}), getClientCategory) //api/company/client/category
